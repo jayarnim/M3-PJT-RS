@@ -1,0 +1,64 @@
+# RUNTIME ==========
+seed: 42
+
+
+# MODEL ==========
+model:
+  name: gmf
+  params:
+    embedding_dim: 32
+    score: dot
+    sampler: lognormal
+    param_q: 0.1
+    param_p: 1.0
+    beta: 0.5
+    dropout: 0.2
+
+
+# DATAMODULE PACKAGE ==========
+split:
+  ratio:
+    trn: 8
+    val: 1
+    tst: 1
+  min_rating: 1
+  filter_by: user
+
+dataloader:
+  negatives:
+    opt: 4
+    msr: 99
+  batch_size:
+    opt: 256
+    msr: 1024
+  shuffle: True
+
+
+# TRAINER PACKAGE ==========
+num_epochs: 100
+
+criterion:
+  name: bce
+  params:
+
+annealing:
+  name: linear
+  params:
+    min: 0.0
+    max: 0.1
+    warmup: 10
+
+optimizer:
+  name: adamw
+  params:
+    lr: 0.001
+    weight_decay: 0.00001
+
+metric:
+  name: ndcg
+  cutoff: 10
+
+early_stopping:
+  delta: 0.001
+  patience: 5
+  warmup: 10
